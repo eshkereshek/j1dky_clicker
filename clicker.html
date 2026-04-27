@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Кликер</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #13131e;
+      --border:    #2a2a40;
+      --accent:    #f0c040;
+      --accent2:   #e05050;
+      --text:      #e8e8f0;
+      --muted:     #6060a0;
+      --glow:      rgba(240,192,64,0.35);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Onest', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Фоновая сетка */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: .35;
+      pointer-events: none;
+    }
+
+    /* Радиальное свечение */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(240,192,64,.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .game {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 24px;
+    }
+
+    /* ── Заголовок ── */
+    h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.1rem, 4vw, 1.6rem);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-shadow: 0 0 24px var(--glow);
+    }
+
+    /* ── Счётчик ── */
+    .score-wrap {
+      text-align: center;
+      line-height: 1;
+    }
+    .score-label {
+      font-size: .75rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .score {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(2.5rem, 10vw, 4.5rem);
+      font-weight: 900;
+      color: var(--text);
+      text-shadow: 0 0 40px var(--glow);
+      transition: transform .08s;
+    }
+    .score.pop { transform: scale(1.08); }
+
+    .per-click {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .per-click span { color: var(--accent); font-weight: 600; }
+
+    /* ── Кнопка-кликер ── */
+    .clicker-btn {
+      position: relative;
+      width: clamp(160px, 35vw, 220px);
+      height: clamp(160px, 35vw, 220px);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      outline: none;
+      transition: transform .12s cubic-bezier(.34,1.56,.64,1);
+      filter: drop-shadow(0 0 24px var(--glow));
+    }
+    .clicker-btn:active { transform: scale(.90); }
+    .clicker-btn:hover  { filter: drop-shadow(0 0 40px var(--glow)) brightness(1.1); }
+
+    /* Кольцо вокруг кнопки */
+    .clicker-btn::before {
+      content: '';
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      opacity: .5;
+      animation: ring-spin 8s linear infinite;
+    }
+    .clicker-btn::after {
+      content: '';
+      position: absolute; inset: -16px;
+      border-radius: 50%;
+      border: 1px dashed var(--muted);
+      animation: ring-spin 14s linear infinite reverse;
+    }
+    @keyframes ring-spin { to { transform: rotate(360deg); } }
+
+    /* Изображение внутри кнопки */
+    .btn-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* Плейсхолдер когда нет изображения */
+    .btn-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 38%, #2a2a50, var(--surface));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      pointer-events: none;
+    }
+
+    /* ── Всплывающие +N ── */
+    .float-text {
+      position: fixed;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-shadow: 0 0 12px var(--glow);
+      pointer-events: none;
+      animation: float-up .9s ease-out forwards;
+      z-index: 100;
+    }
+    @keyframes float-up {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-90px) scale(.6); }
+    }
+
+    /* ── Апгрейды ── */
+    .upgrades-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      align-self: flex-start;
+    }
+
+    .upgrades {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: clamp(260px, 70vw, 360px);
+    }
+
+    .upg-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .1s;
+      color: var(--text);
+      text-align: left;
+    }
+    .upg-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #1c1c2e;
+      transform: translateX(4px);
+    }
+    .upg-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    .upg-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .upg-info { flex: 1; }
+    .upg-name { font-weight: 600; font-size: .9rem; }
+    .upg-desc { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .upg-cost {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .upg-cost.cant-afford { color: var(--accent2); }
+
+    /* ── Уведомление о файле ── */
+    .file-notice {
+      font-size: .72rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+    .file-notice code {
+      color: var(--accent);
+      background: #1a1a2e;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: .7rem;
+    }
+  </style>
+</head>
+<body>
+<div class="game">
+
+  <h1>⚡ КЛИКЕР</h1>
+
+  <div class="score-wrap">
+    <div class="score-label">очки</div>
+    <div class="score" id="score">0</div>
+    <div class="per-click">+<span id="cps">1</span> за клик</div>
+  </div>
+
+  <button class="clicker-btn" id="mainBtn" onclick="handleClick(event)">
+    <!-- Сюда подставится <img> если найдём файл, иначе — заглушка -->
+    <div class="btn-placeholder" id="btnPlaceholder">🪙</div>
+  </button>
+
+  <div class="upgrades-title">улучшения</div>
+  <div class="upgrades" id="upgrades"></div>
+
+  <div class="file-notice">
+    Положи изображение рядом с этим файлом и назови его
+    <code>button.png</code> (или <code>.jpg</code>, <code>.webp</code>, <code>.gif</code>) —
+    оно автоматически станет кнопкой.
+  </div>
+
+</div>
+
+<script>
+// ── Состояние ──────────────────────────────────────────────────────────────
+let score = 0;
+let clickPower = 1;
+
+const upgrades = [
+  { id:'u1', name:'Острый палец',   desc:'+1 к клику',     cost:10,   multiplier:1, bought:0, max:10, icon:'👆' },
+  { id:'u2', name:'Двойной удар',   desc:'+2 к клику',     cost:50,   multiplier:2, bought:0, max:5,  icon:'✌️' },
+  { id:'u3', name:'Золотой коготь', desc:'+5 к клику',     cost:200,  multiplier:5, bought:0, max:5,  icon:'🦅' },
+  { id:'u4', name:'Лазерный луч',   desc:'+15 к клику',    cost:1000, multiplier:15,bought:0, max:3,  icon:'⚡' },
+  { id:'u5', name:'Квантовый кулак',desc:'+50 к клику',    cost:5000, multiplier:50,bought:0, max:2,  icon:'☄️' },
+];
+
+// ── Изображение кнопки ─────────────────────────────────────────────────────
+const imageExtensions = ['button.png','button.jpg','button.jpeg','button.webp','button.gif'];
+let imgIndex = 0;
+
+function tryNextImage() {
+  if (imgIndex >= imageExtensions.length) return; // Ни одно не подошло
+  const img = new Image();
+  img.onload = () => {
+    img.className = 'btn-img';
+    const ph = document.getElementById('btnPlaceholder');
+    ph.replaceWith(img);
+  };
+  img.onerror = () => {
+    imgIndex++;
+    tryNextImage();
+  };
+  img.src = imageExtensions[imgIndex];
+}
+tryNextImage();
+
+// ── Рендер апгрейдов ───────────────────────────────────────────────────────
+function renderUpgrades() {
+  const container = document.getElementById('upgrades');
+  container.innerHTML = '';
+  upgrades.forEach(u => {
+    if (u.bought >= u.max) return; // Скрыть купленные до предела
+    const btn = document.createElement('button');
+    btn.className = 'upg-btn';
+    const canAfford = score >= u.cost;
+    if (!canAfford) btn.disabled = true;
+    btn.innerHTML = `
+      <span class="upg-icon">${u.icon}</span>
+      <div class="upg-info">
+        <div class="upg-name">${u.name} <small style="color:var(--muted);font-weight:400">(${u.bought}/${u.max})</small></div>
+        <div class="upg-desc">${u.desc}</div>
+      </div>
+      <div class="upg-cost ${canAfford?'':'cant-afford'}">💰 ${u.cost}</div>
+    `;
+    btn.onclick = () => buyUpgrade(u);
+    container.appendChild(btn);
+  });
+}
+
+function buyUpgrade(u) {
+  if (score < u.cost || u.bought >= u.max) return;
+  score -= u.cost;
+  u.bought++;
+  clickPower += u.multiplier;
+  u.cost = Math.floor(u.cost * 2.2);
+  updateScore();
+  renderUpgrades();
+}
+
+// ── Клик ──────────────────────────────────────────────────────────────────
+function handleClick(e) {
+  score += clickPower;
+  updateScore();
+  spawnFloat(e.clientX, e.clientY, `+${clickPower}`);
+  renderUpgrades();
+}
+
+function updateScore() {
+  const el = document.getElementById('score');
+  el.textContent = formatNum(score);
+  document.getElementById('cps').textContent = clickPower;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+  setTimeout(() => el.classList.remove('pop'), 80);
+}
+
+function formatNum(n) {
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(1)+'M';
+  if (n >= 1_000)     return (n/1_000).toFixed(1)+'K';
+  return n.toString();
+}
+
+// ── Всплывающие числа ──────────────────────────────────────────────────────
+function spawnFloat(x, y, text) {
+  const el = document.createElement('div');
+  el.className = 'float-text';
+  el.textContent = text;
+  el.style.left = (x - 20 + (Math.random()*40-20)) + 'px';
+  el.style.top  = (y - 10) + 'px';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+// ── Инит ───────────────────────────────────────────────────────────────────
+renderUpgrades();
+</script>
+</body>
+</html>
