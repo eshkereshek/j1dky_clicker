@@ -31,8 +31,6 @@
       flex-direction: column;
       align-items: center;
       overflow-x: hidden;
-      padding: 16px 16px 32px;
-      /* Fix blue tap highlight on mobile */
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
       user-select: none;
@@ -59,7 +57,6 @@
       z-index: 0;
     }
 
-    /* ── Летающие картинки ── */
     #particles-layer {
       position: fixed;
       inset: 0;
@@ -86,6 +83,241 @@
       100% { opacity: 0;   transform: var(--tx) rotate(var(--rot)) scale(.9); }
     }
 
+    /* ── Табы ── */
+    .tabs-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      background: rgba(10,10,15,.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 8px 12px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Unbounded', sans-serif;
+      font-size: .52rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── Страницы ── */
+    .page {
+      display: none;
+      width: 100%;
+      padding-top: 56px;
+    }
+    .page.active { display: block; }
+
+    /* ── Плавающие кнопки (лидерборд и ключ) ── */
+    .fab {
+      position: fixed;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      z-index: 150;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      box-shadow: 0 4px 16px rgba(0,0,0,.5);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .fab:active { transform: scale(.88); }
+
+    .fab-leaderboard {
+      top: 66px;
+      right: 12px;
+      background: linear-gradient(135deg, #1a1a2e, #2a2a50);
+      border: 2px solid var(--accent4);
+      color: var(--accent4);
+      box-shadow: 0 4px 20px rgba(160,112,240,.3);
+    }
+
+    .fab-key {
+      top: 66px;
+      left: 12px;
+      background: linear-gradient(135deg, #1a2a1a, #2a4a2a);
+      border: 2px solid var(--accent3);
+      color: var(--accent3);
+      box-shadow: 0 4px 20px rgba(80,208,160,.3);
+    }
+
+    /* ── Модалки ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      max-width: 360px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .modal-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .75rem;
+      color: var(--accent);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      line-height: 1;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* ── Лидерборд ── */
+    .lb-entry {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.03);
+      margin-bottom: 6px;
+      border: 1px solid var(--border);
+    }
+    .lb-rank {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .7rem;
+      color: var(--muted);
+      width: 22px;
+      text-align: center;
+    }
+    .lb-rank.gold   { color: #ffd700; }
+    .lb-rank.silver { color: #c0c0c0; }
+    .lb-rank.bronze { color: #cd7f32; }
+    .lb-name { flex: 1; font-size: .8rem; color: var(--text); }
+    .lb-score {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .68rem;
+      color: var(--accent);
+    }
+    .lb-me { border-color: var(--accent4); background: rgba(160,112,240,.08); }
+
+    .lb-btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: rgba(160,112,240,.15);
+      border: 1px solid var(--accent4);
+      color: var(--accent4);
+      border-radius: 10px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: .58rem;
+      letter-spacing: .08em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .lb-btn:active { background: rgba(160,112,240,.25); }
+
+    /* ── Ключ ── */
+    .key-locked {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .key-locked .key-icon { font-size: 3rem; margin-bottom: 12px; }
+    .key-locked .key-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .8rem;
+      color: var(--accent3);
+      margin-bottom: 8px;
+    }
+    .key-locked .key-desc { font-size: .72rem; color: var(--muted); line-height: 1.5; }
+    .key-progress {
+      margin-top: 14px;
+      height: 6px;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .key-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent3), var(--accent));
+      border-radius: 6px;
+      transition: width .3s;
+    }
+    .key-progress-label { font-size: .62rem; color: var(--muted); margin-top: 6px; text-align: center; }
+
+    .key-unlocked { text-align: center; padding: 10px 0; }
+    .key-unlocked .key-icon { font-size: 3rem; margin-bottom: 12px; }
+    .key-unlocked .key-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .8rem;
+      color: var(--accent3);
+      margin-bottom: 8px;
+    }
+    .key-value {
+      background: rgba(80,208,160,.08);
+      border: 1px solid var(--accent3);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .65rem;
+      color: var(--accent3);
+      word-break: break-all;
+      margin: 10px 0;
+      font-family: monospace;
+    }
+    .copy-btn {
+      width: 100%;
+      padding: 11px;
+      background: rgba(80,208,160,.15);
+      border: 1px solid var(--accent3);
+      color: var(--accent3);
+      border-radius: 10px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: .6rem;
+      letter-spacing: .08em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .copy-btn:active { background: rgba(80,208,160,.3); }
+
     /* ── Основная игра ── */
     .game {
       position: relative;
@@ -96,6 +328,7 @@
       gap: 16px;
       width: 100%;
       max-width: 420px;
+      padding: 16px 16px 32px;
     }
 
     h1 {
@@ -109,7 +342,6 @@
       margin-top: 8px;
     }
 
-    /* ── Счётчик ── */
     .score-wrap { text-align: center; line-height: 1; }
     .score-label {
       font-size: .68rem;
@@ -130,7 +362,6 @@
     .per-click { font-size: .78rem; color: var(--muted); margin-top: 4px; }
     .per-click span { color: var(--accent); font-weight: 600; }
 
-    /* ── Статы-пилюли ── */
     .stat-pills {
       display: flex;
       flex-wrap: wrap;
@@ -153,7 +384,6 @@
     .pill.combo  { border-color: var(--accent4); color: var(--accent4); background: rgba(160,112,240,.08); }
     .pill.multi  { border-color: var(--accent);  color: var(--accent);  background: rgba(240,192,64,.08); }
 
-    /* ── Комбо-счётчик ── */
     .combo-bar {
       width: 100%;
       max-width: 280px;
@@ -172,7 +402,6 @@
       transition: width .1s;
     }
 
-    /* ── Кнопка ── */
     .clicker-btn {
       position: relative;
       width: clamp(140px, 42vw, 190px);
@@ -183,7 +412,6 @@
       background: none;
       padding: 0;
       outline: none;
-      /* Critical mobile fixes */
       -webkit-tap-highlight-color: transparent;
       -webkit-appearance: none;
       appearance: none;
@@ -192,8 +420,6 @@
       filter: drop-shadow(0 0 20px var(--glow));
     }
     .clicker-btn:active { transform: scale(.86) !important; }
-    .clicker-btn:focus { outline: none; }
-    .clicker-btn:focus-visible { outline: none; }
 
     .clicker-btn::before {
       content: '';
@@ -231,7 +457,6 @@
       pointer-events: none;
     }
 
-    /* ── Всплывающие числа ── */
     .float-text {
       position: fixed;
       font-family: 'Unbounded', sans-serif;
@@ -249,7 +474,6 @@
       100% { opacity: 0; transform: translateY(-80px) scale(.6); }
     }
 
-    /* ── Секции апгрейдов ── */
     .upgrades-title {
       font-family: 'Unbounded', sans-serif;
       font-size: .58rem;
@@ -261,6 +485,7 @@
     }
     .upgrades-title.section2 { color: var(--accent3); }
     .upgrades-title.section3 { color: var(--accent4); }
+    .upgrades-title.section4 { color: var(--accent2); }
 
     .upgrades {
       display: flex;
@@ -287,12 +512,24 @@
       touch-action: manipulation;
       outline: none;
       width: 100%;
+      min-height: 60px;
+      position: relative;
+      overflow: hidden;
     }
-    .upg-btn:active:not(:disabled) { background: #1c1c2e; }
-    .upg-btn.type-auto:active:not(:disabled)  { border-color: var(--accent3); }
-    .upg-btn.type-crit:active:not(:disabled)  { border-color: var(--accent2); }
-    .upg-btn.type-combo:active:not(:disabled) { border-color: var(--accent4); }
-    .upg-btn.type-click:active:not(:disabled) { border-color: var(--accent);  }
+    .upg-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background .1s;
+    }
+    .upg-btn:active:not(:disabled)::after { background: rgba(255,255,255,.05); }
+    .upg-btn.type-auto   { border-left: 3px solid var(--accent3); }
+    .upg-btn.type-crit   { border-left: 3px solid var(--accent2); }
+    .upg-btn.type-combo  { border-left: 3px solid var(--accent4); }
+    .upg-btn.type-click  { border-left: 3px solid var(--accent);  }
+    .upg-btn.type-multi  { border-left: 3px solid #ff9050; }
+    .upg-btn.type-mega   { border-left: 3px solid #ff50ff; }
     .upg-btn:disabled { opacity: .36; cursor: not-allowed; }
 
     .upg-icon { font-size: 1.3rem; flex-shrink: 0; }
@@ -310,7 +547,6 @@
     .upg-cost.cant-afford { color: var(--accent2); }
     .upg-bought { font-size: .58rem; color: var(--muted); }
 
-    /* ── Сохранение ── */
     .save-status {
       font-size: .62rem;
       color: var(--muted);
@@ -321,7 +557,6 @@
     .save-status.ok   { color: var(--accent3); }
     .save-status.err  { color: var(--accent2); }
 
-    /* ── Username ── */
     .tg-user {
       font-size: .72rem;
       color: var(--muted);
@@ -330,51 +565,295 @@
       gap: 6px;
     }
     .tg-user span { color: var(--text); }
+
+    /* ── Донат страница ── */
+    .donate-page {
+      position: relative;
+      z-index: 1;
+      padding: 16px 16px 32px;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .donate-header {
+      text-align: center;
+      padding: 20px 0 16px;
+    }
+    .donate-header h2 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .9rem;
+      color: var(--accent);
+      letter-spacing: .1em;
+      margin-bottom: 8px;
+    }
+    .donate-header p {
+      font-size: .72rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .donate-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .donate-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(240,192,64,.15);
+    }
+    .donate-card.featured::before {
+      content: '🔥 ХИТ';
+      position: absolute;
+      top: 0; right: 0;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Unbounded', sans-serif;
+      font-size: .48rem;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 0 14px 0 8px;
+    }
+    .donate-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .donate-card-icon { font-size: 2rem; }
+    .donate-card-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .75rem;
+      color: var(--text);
+    }
+    .donate-card-subtitle { font-size: .65rem; color: var(--muted); margin-top: 2px; }
+    .donate-card-perks { margin-bottom: 12px; }
+    .donate-perk {
+      font-size: .68rem;
+      color: var(--text);
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .donate-perk::before { content: '✓'; color: var(--accent3); font-weight: 700; }
+
+    .stars-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Unbounded', sans-serif;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity .15s, transform .1s;
+    }
+    .stars-btn:active { transform: scale(.96); opacity: .85; }
+    .stars-btn.tier1 { background: linear-gradient(135deg, #1a1a3a, #2a2a60); border: 1px solid var(--accent4); color: var(--accent4); }
+    .stars-btn.tier2 { background: linear-gradient(135deg, #1a2a1a, #2a4020); border: 1px solid var(--accent3); color: var(--accent3); }
+    .stars-btn.tier3 { background: linear-gradient(135deg, #2a1a10, #402010); border: 1px solid var(--accent); color: var(--accent); }
+    .stars-btn.tier4 { background: linear-gradient(135deg, #2a1010, #401010); border: 1px solid var(--accent2); color: var(--accent2); }
+
+    .stars-price {
+      font-size: .55rem;
+      margin-left: 4px;
+      opacity: .75;
+    }
+
+    .donate-note {
+      text-align: center;
+      font-size: .6rem;
+      color: var(--muted);
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    .lb-loading {
+      text-align: center;
+      color: var(--muted);
+      font-size: .7rem;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
 
-<!-- Слой с летающими картинками -->
 <div id="particles-layer"></div>
 
-<div class="game">
-  <h1>⚡ КЛИКЕР</h1>
-  <div class="tg-user" id="tgUser"></div>
+<!-- Табы -->
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tabGame" type="button" ontouchend="switchTab('game',event)" onclick="if(event.pointerType!=='touch')switchTab('game',event)">⚡ Кликер</button>
+  <button class="tab-btn" id="tabDonate" type="button" ontouchend="switchTab('donate',event)" onclick="if(event.pointerType!=='touch')switchTab('donate',event)">💎 Донат</button>
+</div>
 
-  <div class="score-wrap">
-    <div class="score-label">очки</div>
-    <div class="score" id="score">0</div>
-    <div class="per-click">+<span id="cps">1</span> за клик</div>
+<!-- Кнопки FAB -->
+<button class="fab fab-leaderboard" id="fabLb" type="button">🏆</button>
+<button class="fab fab-key" id="fabKey" type="button">🔑</button>
+
+<!-- Модалка лидерборда -->
+<div class="modal-overlay" id="lbModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🏆 Лидерборд</span>
+      <button class="modal-close" id="lbClose" type="button">✕</button>
+    </div>
+    <div id="lbContent"><div class="lb-loading">⏳ Загрузка...</div></div>
+    <button class="lb-btn" id="lbSubmit" type="button">📤 Обновить мой результат</button>
   </div>
+</div>
 
-  <!-- Статистика -->
-  <div class="stat-pills" id="statPills"></div>
-  <div class="combo-bar" id="comboBar"><div class="combo-fill" id="comboFill"></div></div>
+<!-- Модалка ключа -->
+<div class="modal-overlay" id="keyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🔑 Секретный ключ</span>
+      <button class="modal-close" id="keyClose" type="button">✕</button>
+    </div>
+    <div id="keyContent"></div>
+  </div>
+</div>
 
-  <button class="clicker-btn" id="mainBtn" type="button">
-    <div class="btn-placeholder" id="btnPlaceholder">🪙</div>
-  </button>
+<!-- Страница игры -->
+<div class="page active" id="pageGame">
+  <div class="game" style="margin: 0 auto;">
+    <h1>⚡ КЛИКЕР</h1>
+    <div class="tg-user" id="tgUser"></div>
 
-  <!-- Сохранение -->
-  <div class="save-status" id="saveStatus"></div>
+    <div class="score-wrap">
+      <div class="score-label">очки</div>
+      <div class="score" id="score">0</div>
+      <div class="per-click">+<span id="cps">1</span> за клик</div>
+    </div>
 
-  <!-- Улучшения кликов -->
-  <div class="upgrades-title">⚡ улучшения клика</div>
-  <div class="upgrades" id="upgClick"></div>
+    <div class="stat-pills" id="statPills"></div>
+    <div class="combo-bar" id="comboBar"><div class="combo-fill" id="comboFill"></div></div>
 
-  <!-- Авто-кликеры -->
-  <div class="upgrades-title section2">🤖 авто-кликеры</div>
-  <div class="upgrades" id="upgAuto"></div>
+    <button class="clicker-btn" id="mainBtn" type="button">
+      <div class="btn-placeholder" id="btnPlaceholder">🪙</div>
+    </button>
 
-  <!-- Спецальные -->
-  <div class="upgrades-title section3">✨ особые способности</div>
-  <div class="upgrades" id="upgSpec"></div>
+    <div class="save-status" id="saveStatus"></div>
+
+    <div class="upgrades-title">⚡ улучшения клика</div>
+    <div class="upgrades" id="upgClick"></div>
+
+    <div class="upgrades-title section2">🤖 авто-кликеры</div>
+    <div class="upgrades" id="upgAuto"></div>
+
+    <div class="upgrades-title section3">✨ особые способности</div>
+    <div class="upgrades" id="upgSpec"></div>
+
+    <div class="upgrades-title section4">🚀 мега-апгрейды</div>
+    <div class="upgrades" id="upgMega"></div>
+  </div>
+</div>
+
+<!-- Страница доната -->
+<div class="page" id="pageDonate">
+  <div class="donate-page" style="margin: 0 auto;">
+    <div class="donate-header">
+      <h2>💎 Поддержать игру</h2>
+      <p>Купи бонусы за звёзды Telegram и получи преимущества в игре!</p>
+    </div>
+
+    <div class="donate-card">
+      <div class="donate-card-header">
+        <div class="donate-card-icon">⚡</div>
+        <div>
+          <div class="donate-card-title">Стартовый буст</div>
+          <div class="donate-card-subtitle">Для новичков</div>
+        </div>
+      </div>
+      <div class="donate-card-perks">
+        <div class="donate-perk">+50 к силе клика</div>
+        <div class="donate-perk">+5/сек авто-кликер</div>
+        <div class="donate-perk">x1.5 множитель на 1 час</div>
+      </div>
+      <button class="stars-btn tier1" type="button" ontouchend="buyStars(50,event)" onclick="if(event.pointerType!=='touch')buyStars(50,event)">
+        ⭐ Купить <span class="stars-price">50 звёзд</span>
+      </button>
+    </div>
+
+    <div class="donate-card featured">
+      <div class="donate-card-header">
+        <div class="donate-card-icon">🔥</div>
+        <div>
+          <div class="donate-card-title">Огненный пакет</div>
+          <div class="donate-card-subtitle">Самый популярный</div>
+        </div>
+      </div>
+      <div class="donate-card-perks">
+        <div class="donate-perk">+200 к силе клика</div>
+        <div class="donate-perk">+25/сек авто-кликер</div>
+        <div class="donate-perk">x2 множитель навсегда</div>
+        <div class="donate-perk">Крит +20% шанс</div>
+      </div>
+      <button class="stars-btn tier2" type="button" ontouchend="buyStars(200,event)" onclick="if(event.pointerType!=='touch')buyStars(200,event)">
+        ⭐ Купить <span class="stars-price">200 звёзд</span>
+      </button>
+    </div>
+
+    <div class="donate-card">
+      <div class="donate-card-header">
+        <div class="donate-card-icon">💫</div>
+        <div>
+          <div class="donate-card-title">Золотой статус</div>
+          <div class="donate-card-subtitle">Для серьёзных игроков</div>
+        </div>
+      </div>
+      <div class="donate-card-perks">
+        <div class="donate-perk">+1000 к силе клика</div>
+        <div class="donate-perk">+100/сек авто-кликер</div>
+        <div class="donate-perk">x5 множитель навсегда</div>
+        <div class="donate-perk">Крит x5 сила</div>
+        <div class="donate-perk">🏅 Значок в лидерборде</div>
+      </div>
+      <button class="stars-btn tier3" type="button" ontouchend="buyStars(500,event)" onclick="if(event.pointerType!=='touch')buyStars(500,event)">
+        ⭐ Купить <span class="stars-price">500 звёзд</span>
+      </button>
+    </div>
+
+    <div class="donate-card">
+      <div class="donate-card-header">
+        <div class="donate-card-icon">👑</div>
+        <div>
+          <div class="donate-card-title">Легендарный</div>
+          <div class="donate-card-subtitle">Для настоящих королей</div>
+        </div>
+      </div>
+      <div class="donate-card-perks">
+        <div class="donate-perk">+10 000 к силе клика</div>
+        <div class="donate-perk">+1000/сек авто-кликер</div>
+        <div class="donate-perk">x20 множитель навсегда</div>
+        <div class="donate-perk">Крит x10 сила</div>
+        <div class="donate-perk">👑 Корона в лидерборде</div>
+        <div class="donate-perk">VIP-ключ автоматически</div>
+      </div>
+      <button class="stars-btn tier4" type="button" ontouchend="buyStars(2000,event)" onclick="if(event.pointerType!=='touch')buyStars(2000,event)">
+        ⭐ Купить <span class="stars-price">2000 звёзд</span>
+      </button>
+    </div>
+
+    <p class="donate-note">
+      💳 Оплата через официальную систему звёзд Telegram.<br>
+      После покупки перезапусти игру для применения бонусов.
+    </p>
+  </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════════
-//  Telegram WebApp init
-// ══════════════════════════════════════════════════════════════════
 const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
@@ -388,49 +867,52 @@ if (tg) {
   }
 }
 
-// ══════════════════════════════════════════════════════════════════
-//  Состояние игры
-// ══════════════════════════════════════════════════════════════════
 let state = {
   score: 0,
+  totalEarned: 0,
   clickPower: 1,
   autoPerSec: 0,
-  multiplier: 1,       // множитель всего дохода
-  critChance: 0,       // 0..1 вероятность крита
-  critMult: 2,         // во сколько раз крит больше
-  comboCount: 0,       // текущее комбо
+  multiplier: 1,
+  critChance: 0,
+  critMult: 2,
+  comboCount: 0,
   comboTimeout: null,
   lastAutoTime: Date.now(),
 };
 
-const COMBO_RESET_MS = 1500;  // сброс комбо после паузы
-const COMBO_MAX      = 10;    // максимальное комбо (x11 множитель)
-const COMBO_BONUS    = 0.1;   // +10% за каждый уровень комбо
-const AUTO_TICK_MS   = 200;   // авто-клик тик
+const COMBO_RESET_MS = 1500;
+const COMBO_MAX      = 10;
+const COMBO_BONUS    = 0.1;
+const AUTO_TICK_MS   = 200;
+const KEY_THRESHOLD  = 1_000_000_000;
+const SECRET_KEY     = 'https://vpn.tgflovv.ru:8443/free-speed/b7fc745a-6875-472d-8dcb-3f330e9316b7';
 
-// ── Апгрейды: КЛИК ────────────────────────────────────────────────
 const UPG_CLICK = [
-  { id:'c1', type:'click', name:'Острый палец',    desc:'+1 к клику',   cost:10,   delta:1,   mult:2.0, bought:0, max:10, icon:'👆' },
-  { id:'c2', type:'click', name:'Двойной удар',    desc:'+2 к клику',   cost:50,   delta:2,   mult:2.2, bought:0, max:5,  icon:'✌️' },
-  { id:'c3', type:'click', name:'Золотой коготь',  desc:'+5 к клику',   cost:200,  delta:5,   mult:2.4, bought:0, max:5,  icon:'🦅' },
-  { id:'c4', type:'click', name:'Лазерный луч',    desc:'+15 к клику',  cost:1000, delta:15,  mult:2.5, bought:0, max:3,  icon:'⚡' },
-  { id:'c5', type:'click', name:'Квантовый кулак', desc:'+50 к клику',  cost:5000, delta:50,  mult:2.6, bought:0, max:2,  icon:'☄️' },
+  { id:'c1', type:'click', name:'Острый палец',     desc:'+1 к клику',    cost:10,      delta:1,    mult:2.0,  bought:0, max:10, icon:'👆' },
+  { id:'c2', type:'click', name:'Двойной удар',     desc:'+2 к клику',    cost:50,      delta:2,    mult:2.2,  bought:0, max:5,  icon:'✌️' },
+  { id:'c3', type:'click', name:'Золотой коготь',   desc:'+5 к клику',    cost:200,     delta:5,    mult:2.4,  bought:0, max:5,  icon:'🦅' },
+  { id:'c4', type:'click', name:'Лазерный луч',     desc:'+15 к клику',   cost:1000,    delta:15,   mult:2.5,  bought:0, max:5,  icon:'⚡' },
+  { id:'c5', type:'click', name:'Квантовый кулак',  desc:'+50 к клику',   cost:5000,    delta:50,   mult:2.6,  bought:0, max:5,  icon:'☄️' },
+  { id:'c6', type:'click', name:'Алмазный удар',    desc:'+200 к клику',  cost:30000,   delta:200,  mult:2.7,  bought:0, max:5,  icon:'💎' },
+  { id:'c7', type:'click', name:'Нейронный импульс',desc:'+1000 к клику', cost:200000,  delta:1000, mult:2.8,  bought:0, max:3,  icon:'🧠' },
+  { id:'c8', type:'click', name:'Космическая длань',desc:'+5000 к клику', cost:2000000, delta:5000, mult:3.0,  bought:0, max:2,  icon:'🌌' },
 ];
 
-// ── Апгрейды: АВТО ────────────────────────────────────────────────
 const UPG_AUTO = [
-  { id:'a1', type:'auto', name:'Робот-помощник',  desc:'+0.5/сек автоматически',  cost:80,    delta:.5,  mult:2.2, bought:0, max:5,  icon:'🤖' },
-  { id:'a2', type:'auto', name:'Ферма кликов',    desc:'+2/сек автоматически',    cost:500,   delta:2,   mult:2.3, bought:0, max:5,  icon:'🏭' },
-  { id:'a3', type:'auto', name:'ИИ-кликер',       desc:'+8/сек автоматически',    cost:3000,  delta:8,   mult:2.5, bought:0, max:3,  icon:'🧠' },
-  { id:'a4', type:'auto', name:'Квантовый сервер',desc:'+30/сек автоматически',   cost:15000, delta:30,  mult:2.6, bought:0, max:2,  icon:'🖥️' },
+  { id:'a1', type:'auto', name:'Робот-помощник',   desc:'+0.5/сек',   cost:80,       delta:.5,   mult:2.2,  bought:0, max:10, icon:'🤖' },
+  { id:'a2', type:'auto', name:'Ферма кликов',     desc:'+2/сек',     cost:500,      delta:2,    mult:2.3,  bought:0, max:5,  icon:'🏭' },
+  { id:'a3', type:'auto', name:'ИИ-кликер',        desc:'+8/сек',     cost:3000,     delta:8,    mult:2.5,  bought:0, max:5,  icon:'🧠' },
+  { id:'a4', type:'auto', name:'Квантовый сервер', desc:'+30/сек',    cost:15000,    delta:30,   mult:2.6,  bought:0, max:5,  icon:'🖥️' },
+  { id:'a5', type:'auto', name:'Нейросеть',        desc:'+100/сек',   cost:100000,   delta:100,  mult:2.7,  bought:0, max:3,  icon:'🌐' },
+  { id:'a6', type:'auto', name:'Кликботы-армия',   desc:'+500/сек',   cost:800000,   delta:500,  mult:2.8,  bought:0, max:3,  icon:'⚙️' },
+  { id:'a7', type:'auto', name:'Галактика кликов', desc:'+2000/сек',  cost:8000000,  delta:2000, mult:3.0,  bought:0, max:2,  icon:'🌠' },
 ];
 
-// ── Апгрейды: СПЕЦ ────────────────────────────────────────────────
 const UPG_SPEC = [
   {
     id:'s1', type:'crit', name:'Критический удар',
     desc:'Шанс крита +10% (x2 очки)',
-    cost:300, delta:.10, mult:2.5, bought:0, max:4, icon:'🎯',
+    cost:300, delta:.10, mult:2.5, bought:0, max:8, icon:'🎯',
     apply: () => { state.critChance = Math.min(state.critChance + .10, .80); }
   },
   {
@@ -443,12 +925,12 @@ const UPG_SPEC = [
     id:'s3', type:'combo', name:'Комбо-система',
     desc:'Быстрые клики дают бонус до +100%',
     cost:400, delta:1, mult:999, bought:0, max:1, icon:'🔥',
-    apply: () => { /* включается автоматически */ }
+    apply: () => {}
   },
   {
     id:'s4', type:'multi', name:'Золотая лихорадка',
     desc:'x1.5 ко всем очкам',
-    cost:1500, delta:0.5, mult:999, bought:0, max:3, icon:'✨',
+    cost:1500, delta:0.5, mult:5, bought:0, max:5, icon:'✨',
     apply: () => { state.multiplier += 0.5; }
   },
   {
@@ -457,48 +939,89 @@ const UPG_SPEC = [
     cost:8000, delta:1, mult:999, bought:0, max:1, icon:'⛄',
     apply: () => { state.critMult += 1; }
   },
+  {
+    id:'s6', type:'crit', name:'Ультракрит',
+    desc:'Крит x5 урона',
+    cost:50000, delta:2, mult:999, bought:0, max:1, icon:'🌟',
+    apply: () => { state.critMult += 2; }
+  },
+  {
+    id:'s7', type:'combo', name:'Вечное комбо',
+    desc:'Комбо сбрасывается вдвое медленнее',
+    cost:25000, delta:1, mult:999, bought:0, max:1, icon:'♾️',
+    apply: () => {}
+  },
 ];
 
-// ══════════════════════════════════════════════════════════════════
-//  Летающие картинки фона
-// ══════════════════════════════════════════════════════════════════
+const UPG_MEGA = [
+  {
+    id:'m1', type:'mega', name:'Ядерный реактор',
+    desc:'+5000 клик +1000/сек и x2 множитель',
+    cost:5000000, delta:1, mult:999, bought:0, max:1, icon:'☢️',
+    apply: () => { state.clickPower += 5000; state.autoPerSec += 1000; state.multiplier += 1; }
+  },
+  {
+    id:'m2', type:'mega', name:'Временной вихрь',
+    desc:'Авто-клик в 3x быстрее на 60 секунд',
+    cost:10000000, delta:1, mult:999, bought:0, max:3, icon:'🌀',
+    apply: () => { activateTimeTwist(); }
+  },
+  {
+    id:'m3', type:'mega', name:'Квантовое превосходство',
+    desc:'+50 000 клик и x3 множитель навсегда',
+    cost:100000000, delta:1, mult:999, bought:0, max:1, icon:'⚛️',
+    apply: () => { state.clickPower += 50000; state.multiplier += 2; }
+  },
+  {
+    id:'m4', type:'mega', name:'Бог кликов',
+    desc:'x10 ко всему. Навсегда.',
+    cost:500000000, delta:1, mult:999, bought:0, max:1, icon:'👑',
+    apply: () => { state.multiplier *= 10; state.clickPower *= 2; state.autoPerSec *= 2; }
+  },
+];
+
+let timeTwistActive = false;
+let autoTickMultiplier = 1;
+
+function activateTimeTwist() {
+  if (timeTwistActive) return;
+  timeTwistActive = true;
+  autoTickMultiplier = 3;
+  showSaveStatus('⚡ Временной вихрь активен (60с)!', 'ok');
+  setTimeout(() => {
+    timeTwistActive = false;
+    autoTickMultiplier = 1;
+    showSaveStatus('⏱️ Временной вихрь завершён', '');
+  }, 60000);
+}
+
 (function initParticles() {
   const layer = document.getElementById('particles-layer');
   const N = 22;
   const W = window.innerWidth || 400;
   const H = window.innerHeight || 700;
-
   for (let i = 0; i < N; i++) {
     const img = document.createElement('img');
     img.src = 'pagrysha.png';
     img.className = 'flying-img';
     img.alt = '';
     img.draggable = false;
-
-    // Случайная начальная позиция
     const startX = Math.random() * W;
     const startY = Math.random() * H;
     img.style.left = startX + 'px';
     img.style.top  = startY + 'px';
-
-    // Случайное направление движения
     const dx = (Math.random() - 0.5) * W * 1.2;
     const dy = (Math.random() - 0.5) * H * 1.2;
     const rot = (Math.random() - 0.5) * 720;
     img.style.setProperty('--tx', `translate(${dx}px, ${dy}px)`);
     img.style.setProperty('--rot', `${rot}deg`);
-
-    // Случайные размер и длительность
     const size = 14 + Math.random() * 22;
     img.style.width  = size + 'px';
     img.style.height = size + 'px';
-
-    const dur  = 5 + Math.random() * 12;
-    const del  = Math.random() * -15;   // отрицательная задержка = стартует сразу в случайной фазе
+    const dur = 5 + Math.random() * 12;
+    const del = Math.random() * -15;
     img.style.animationDuration = dur + 's';
     img.style.animationDelay   = del + 's';
-
-    // Когда анимация заканчивается — случайно перепозиционировать
     img.addEventListener('animationiteration', () => {
       const nx = Math.random() * W;
       const ny = Math.random() * H;
@@ -510,14 +1033,10 @@ const UPG_SPEC = [
       img.style.setProperty('--tx', `translate(${ndx}px, ${ndy}px)`);
       img.style.setProperty('--rot', `${nrot}deg`);
     });
-
     layer.appendChild(img);
   }
 })();
 
-// ══════════════════════════════════════════════════════════════════
-//  Кнопка-изображение
-// ══════════════════════════════════════════════════════════════════
 const exts = ['button.png','button.jpg','button.jpeg','button.webp','button.gif'];
 let ei = 0;
 function tryImg() {
@@ -533,15 +1052,12 @@ function tryImg() {
 }
 tryImg();
 
-// ══════════════════════════════════════════════════════════════════
-//  Сохранение через Telegram CloudStorage
-// ══════════════════════════════════════════════════════════════════
-const SAVE_KEY = 'clicker_state_v2';
-let saveTimer = null;
+const SAVE_KEY = 'clicker_state_v3';
 
 function packState() {
   return JSON.stringify({
     score:       state.score,
+    totalEarned: state.totalEarned,
     clickPower:  state.clickPower,
     autoPerSec:  state.autoPerSec,
     multiplier:  state.multiplier,
@@ -550,6 +1066,7 @@ function packState() {
     upgClick:    UPG_CLICK.map(u => ({ bought: u.bought, cost: u.cost })),
     upgAuto:     UPG_AUTO.map(u => ({ bought: u.bought, cost: u.cost })),
     upgSpec:     UPG_SPEC.map(u => ({ bought: u.bought, cost: u.cost })),
+    upgMega:     UPG_MEGA.map(u => ({ bought: u.bought, cost: u.cost })),
     savedAt:     Date.now(),
   });
 }
@@ -557,12 +1074,13 @@ function packState() {
 function unpackState(raw) {
   try {
     const d = JSON.parse(raw);
-    state.score      = d.score      ?? 0;
-    state.clickPower = d.clickPower ?? 1;
-    state.autoPerSec = d.autoPerSec ?? 0;
-    state.multiplier = d.multiplier ?? 1;
-    state.critChance = d.critChance ?? 0;
-    state.critMult   = d.critMult   ?? 2;
+    state.score       = d.score       ?? 0;
+    state.totalEarned = d.totalEarned ?? d.score ?? 0;
+    state.clickPower  = d.clickPower  ?? 1;
+    state.autoPerSec  = d.autoPerSec  ?? 0;
+    state.multiplier  = d.multiplier  ?? 1;
+    state.critChance  = d.critChance  ?? 0;
+    state.critMult    = d.critMult    ?? 2;
     if (d.upgClick) d.upgClick.forEach((s,i) => {
       if (UPG_CLICK[i]) { UPG_CLICK[i].bought = s.bought; UPG_CLICK[i].cost = s.cost; }
     });
@@ -571,6 +1089,9 @@ function unpackState(raw) {
     });
     if (d.upgSpec) d.upgSpec.forEach((s,i) => {
       if (UPG_SPEC[i]) { UPG_SPEC[i].bought = s.bought; UPG_SPEC[i].cost = s.cost; }
+    });
+    if (d.upgMega) d.upgMega.forEach((s,i) => {
+      if (UPG_MEGA[i]) { UPG_MEGA[i].bought = s.bought; UPG_MEGA[i].cost = s.cost; }
     });
     return true;
   } catch(e) { return false; }
@@ -586,14 +1107,12 @@ function showSaveStatus(msg, cls) {
 
 function saveGame() {
   const data = packState();
-  // Telegram CloudStorage (приоритет)
   if (tg?.CloudStorage) {
     tg.CloudStorage.setItem(SAVE_KEY, data,
       (err) => err ? showSaveStatus('⚠️ Ошибка сохранения', 'err')
                    : showSaveStatus('💾 Прогресс сохранён', 'ok')
     );
   } else {
-    // Fallback — localStorage
     try {
       localStorage.setItem(SAVE_KEY, data);
       showSaveStatus('💾 Сохранено (локально)', 'ok');
@@ -618,15 +1137,9 @@ function loadGame(cb) {
   }
 }
 
-// Автосохранение каждые 15 секунд
 setInterval(saveGame, 15000);
 
-// ══════════════════════════════════════════════════════════════════
-//  Клик
-// ══════════════════════════════════════════════════════════════════
 const btn = document.getElementById('mainBtn');
-
-// Только touchstart + preventDefault чтобы убрать синюю подсветку
 btn.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
 btn.addEventListener('touchend', e => {
   e.preventDefault();
@@ -634,13 +1147,12 @@ btn.addEventListener('touchend', e => {
   handleClick(t.clientX, t.clientY);
 }, { passive: false });
 btn.addEventListener('click', e => {
-  // Только для не-тач (мышь / десктоп)
   if (e.pointerType !== 'touch') handleClick(e.clientX, e.clientY);
 });
 
 function handleClick(cx, cy) {
-  // Комбо
   const comboUnlocked = UPG_SPEC.find(u => u.id === 's3')?.bought > 0;
+  const slowCombo = UPG_SPEC.find(u => u.id === 's7')?.bought > 0;
   if (comboUnlocked) {
     clearTimeout(state.comboTimeout);
     state.comboCount = Math.min(state.comboCount + 1, COMBO_MAX);
@@ -648,29 +1160,26 @@ function handleClick(cx, cy) {
       state.comboCount = 0;
       updateComboBar();
       renderAll();
-    }, COMBO_RESET_MS);
+    }, slowCombo ? COMBO_RESET_MS * 2 : COMBO_RESET_MS);
     updateComboBar();
   }
 
-  // Базовые очки
   let pts = state.clickPower;
 
-  // Комбо-бонус
   if (comboUnlocked && state.comboCount > 1) {
     pts = Math.floor(pts * (1 + (state.comboCount - 1) * COMBO_BONUS));
   }
 
-  // Крит
   let isCrit = false;
   if (state.critChance > 0 && Math.random() < state.critChance) {
     pts = Math.floor(pts * state.critMult);
     isCrit = true;
   }
 
-  // Глобальный множитель
   pts = Math.floor(pts * state.multiplier);
 
   state.score += pts;
+  state.totalEarned += pts;
   updateScore();
   spawnFloat(cx, cy, `+${fmt(pts)}`, isCrit ? 'crit' : 'normal');
   renderUpgradesOnly();
@@ -678,26 +1187,19 @@ function handleClick(cx, cy) {
   if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(isCrit ? 'medium' : 'light');
 }
 
-// ══════════════════════════════════════════════════════════════════
-//  Авто-кликер тик
-// ══════════════════════════════════════════════════════════════════
-let lastAutoX = 50, lastAutoY = 50;
 setInterval(() => {
   if (state.autoPerSec <= 0) return;
-  const pts = Math.floor((state.autoPerSec * AUTO_TICK_MS / 1000) * state.multiplier) || 1;
+  const pts = Math.floor((state.autoPerSec * AUTO_TICK_MS / 1000) * state.multiplier * autoTickMultiplier) || 1;
   state.score += pts;
+  state.totalEarned += pts;
   updateScore();
-  // Случайная позиция для флоат-текста авто
   const rx = 30 + Math.random() * (window.innerWidth - 60);
   const ry = 80 + Math.random() * (window.innerHeight * 0.4);
   spawnFloat(rx, ry, `+${fmt(pts)}`, 'auto');
   renderUpgradesOnly();
 }, AUTO_TICK_MS);
 
-// ══════════════════════════════════════════════════════════════════
-//  Покупка апгрейда
-// ══════════════════════════════════════════════════════════════════
-function buyUpgrade(u, list) {
+function buyUpgrade(u) {
   if (state.score < u.cost || u.bought >= u.max) return;
   state.score -= u.cost;
   u.bought++;
@@ -717,9 +1219,6 @@ function buyUpgrade(u, list) {
   if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 }
 
-// ══════════════════════════════════════════════════════════════════
-//  Рендер
-// ══════════════════════════════════════════════════════════════════
 function renderUpgList(container, list) {
   container.innerHTML = '';
   list.forEach(u => {
@@ -728,7 +1227,6 @@ function renderUpgList(container, list) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = `upg-btn type-${u.type}`;
-    if (!canAfford) b.disabled = true;
     b.innerHTML = `
       <span class="upg-icon">${u.icon}</span>
       <div class="upg-info">
@@ -739,9 +1237,16 @@ function renderUpgList(container, list) {
         <div class="upg-cost ${canAfford?'':'cant-afford'}">💰 ${fmt(u.cost)}</div>
         <div class="upg-bought">${u.bought}/${u.max}</div>
       </div>`;
+    if (!canAfford) b.disabled = true;
     b.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
-    b.addEventListener('touchend', e => { e.preventDefault(); buyUpgrade(u, list); }, { passive: false });
-    b.addEventListener('click', e => { if (e.pointerType !== 'touch') buyUpgrade(u, list); });
+    b.addEventListener('touchend', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!b.disabled) buyUpgrade(u);
+    }, { passive: false });
+    b.addEventListener('click', e => {
+      if (e.pointerType !== 'touch' && !b.disabled) buyUpgrade(u);
+    });
     container.appendChild(b);
   });
 }
@@ -750,12 +1255,11 @@ function renderAll() {
   renderUpgList(document.getElementById('upgClick'), UPG_CLICK);
   renderUpgList(document.getElementById('upgAuto'),  UPG_AUTO);
   renderUpgList(document.getElementById('upgSpec'),  UPG_SPEC);
+  renderUpgList(document.getElementById('upgMega'),  UPG_MEGA);
   updateStatPills();
 }
 
-function renderUpgradesOnly() {
-  renderAll();
-}
+function renderUpgradesOnly() { renderAll(); }
 
 function updateScore() {
   const el = document.getElementById('score');
@@ -789,10 +1293,8 @@ function updateComboBar() {
   fill.style.width = Math.min(state.comboCount / COMBO_MAX * 100, 100) + '%';
 }
 
-// ══════════════════════════════════════════════════════════════════
-//  Утилиты
-// ══════════════════════════════════════════════════════════════════
 function fmt(n) {
+  if (n >= 1_000_000_000_000) return (n/1_000_000_000_000).toFixed(1)+'T';
   if (n >= 1_000_000_000) return (n/1_000_000_000).toFixed(1)+'B';
   if (n >= 1_000_000)     return (n/1_000_000).toFixed(1)+'M';
   if (n >= 1_000)         return (n/1_000).toFixed(1)+'K';
@@ -809,9 +1311,220 @@ function spawnFloat(x, y, txt, cls = 'normal') {
   el.addEventListener('animationend', () => el.remove());
 }
 
-// ══════════════════════════════════════════════════════════════════
-//  Старт
-// ══════════════════════════════════════════════════════════════════
+function switchTab(tab, e) {
+  if (e) e.preventDefault();
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+const fabLb = document.getElementById('fabLb');
+fabLb.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+fabLb.addEventListener('touchend', e => { e.preventDefault(); openLeaderboard(); }, { passive: false });
+fabLb.addEventListener('click', e => { if (e.pointerType !== 'touch') openLeaderboard(); });
+
+const fabKey = document.getElementById('fabKey');
+fabKey.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+fabKey.addEventListener('touchend', e => { e.preventDefault(); openKey(); }, { passive: false });
+fabKey.addEventListener('click', e => { if (e.pointerType !== 'touch') openKey(); });
+
+document.getElementById('lbClose').addEventListener('click', () => closeModal('lbModal'));
+document.getElementById('keyClose').addEventListener('click', () => closeModal('keyModal'));
+
+document.getElementById('lbModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('lbModal')) closeModal('lbModal');
+});
+document.getElementById('keyModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('keyModal')) closeModal('keyModal');
+});
+
+const LB_KEY = 'clicker_lb_v1';
+
+function getMyId() {
+  return tg?.initDataUnsafe?.user?.id?.toString() || 'local_user';
+}
+function getMyName() {
+  const user = tg?.initDataUnsafe?.user;
+  if (!user) return 'Гость';
+  return user.first_name + (user.last_name ? ' ' + user.last_name : '');
+}
+
+function openLeaderboard() {
+  openModal('lbModal');
+  loadLeaderboard();
+}
+
+function loadLeaderboard() {
+  const content = document.getElementById('lbContent');
+  content.innerHTML = '<div class="lb-loading">⏳ Загрузка...</div>';
+
+  if (tg?.CloudStorage) {
+    tg.CloudStorage.getItem(LB_KEY, (err, val) => {
+      let entries = [];
+      if (!err && val) {
+        try { entries = JSON.parse(val); } catch(e) {}
+      }
+      renderLeaderboard(entries);
+    });
+  } else {
+    try {
+      const raw = localStorage.getItem(LB_KEY);
+      let entries = raw ? JSON.parse(raw) : [];
+      renderLeaderboard(entries);
+    } catch(e) { renderLeaderboard([]); }
+  }
+}
+
+function renderLeaderboard(entries) {
+  const content = document.getElementById('lbContent');
+  const myId = getMyId();
+
+  entries.sort((a, b) => b.score - a.score);
+  const top = entries.slice(0, 20);
+
+  if (top.length === 0) {
+    content.innerHTML = '<div class="lb-loading">😶 Ещё нет записей.<br>Нажми "Обновить мой результат"!</div>';
+    return;
+  }
+
+  const rankClasses = ['gold', 'silver', 'bronze'];
+  const rankEmojis  = ['🥇', '🥈', '🥉'];
+
+  content.innerHTML = top.map((e, i) => {
+    const isMe = e.id === myId;
+    const rankCls = rankClasses[i] || '';
+    const rankTxt = i < 3 ? rankEmojis[i] : (i + 1);
+    return `<div class="lb-entry ${isMe ? 'lb-me' : ''}">
+      <div class="lb-rank ${rankCls}">${rankTxt}</div>
+      <div class="lb-name">${isMe ? '👤 ' : ''}${escHtml(e.name)}</div>
+      <div class="lb-score">${fmt(e.score)}</div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(str) {
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function submitScore() {
+  const myId   = getMyId();
+  const myName = getMyName();
+  const myScore = state.score;
+
+  function doSave(entries) {
+    const idx = entries.findIndex(e => e.id === myId);
+    if (idx >= 0) {
+      if (myScore > entries[idx].score) {
+        entries[idx].score = myScore;
+        entries[idx].name  = myName;
+        entries[idx].time  = Date.now();
+      }
+    } else {
+      entries.push({ id: myId, name: myName, score: myScore, time: Date.now() });
+    }
+    const data = JSON.stringify(entries);
+    if (tg?.CloudStorage) {
+      tg.CloudStorage.setItem(LB_KEY, data, () => {
+        renderLeaderboard(entries);
+        showSaveStatus('🏆 Результат в лидерборде!', 'ok');
+      });
+    } else {
+      localStorage.setItem(LB_KEY, data);
+      renderLeaderboard(entries);
+      showSaveStatus('🏆 Результат в лидерборде!', 'ok');
+    }
+  }
+
+  if (tg?.CloudStorage) {
+    tg.CloudStorage.getItem(LB_KEY, (err, val) => {
+      let entries = [];
+      if (!err && val) { try { entries = JSON.parse(val); } catch(e) {} }
+      doSave(entries);
+    });
+  } else {
+    let entries = [];
+    try {
+      const raw = localStorage.getItem(LB_KEY);
+      if (raw) entries = JSON.parse(raw);
+    } catch(e) {}
+    doSave(entries);
+  }
+}
+
+document.getElementById('lbSubmit').addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+document.getElementById('lbSubmit').addEventListener('touchend', e => { e.preventDefault(); submitScore(); }, { passive: false });
+document.getElementById('lbSubmit').addEventListener('click', e => { if (e.pointerType !== 'touch') submitScore(); });
+
+function openKey() {
+  openModal('keyModal');
+  renderKeyContent();
+}
+
+function renderKeyContent() {
+  const content = document.getElementById('keyContent');
+  const hasKey = state.totalEarned >= KEY_THRESHOLD || state.score >= KEY_THRESHOLD;
+
+  if (hasKey) {
+    content.innerHTML = `
+      <div class="key-unlocked">
+        <div class="key-icon">🔓</div>
+        <div class="key-title">Ключ получен!</div>
+        <p style="font-size:.68rem;color:var(--muted);margin-bottom:10px;">Ты накликал 1 миллиард очков. Вот твой ключ:</p>
+        <div class="key-value" id="keyVal">${SECRET_KEY}</div>
+        <button class="copy-btn" id="copyKeyBtn" type="button">📋 Скопировать ключ</button>
+      </div>`;
+    const copyBtn = document.getElementById('copyKeyBtn');
+    function doCopy() {
+      navigator.clipboard.writeText(SECRET_KEY).then(() => {
+        copyBtn.textContent = '✅ Скопировано!';
+        setTimeout(() => { copyBtn.textContent = '📋 Скопировать ключ'; }, 2000);
+      }).catch(() => {
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNode(document.getElementById('keyVal'));
+        sel.removeAllRanges();
+        sel.addRange(range);
+        copyBtn.textContent = '✅ Выделено — скопируй вручную';
+        setTimeout(() => { copyBtn.textContent = '📋 Скопировать ключ'; }, 3000);
+      });
+    }
+    copyBtn.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+    copyBtn.addEventListener('touchend', e => { e.preventDefault(); doCopy(); }, { passive: false });
+    copyBtn.addEventListener('click', e => { if (e.pointerType !== 'touch') doCopy(); });
+  } else {
+    const progress = Math.min((state.totalEarned || state.score) / KEY_THRESHOLD, 1);
+    const pct = (progress * 100).toFixed(2);
+    content.innerHTML = `
+      <div class="key-locked">
+        <div class="key-icon">🔒</div>
+        <div class="key-title">Ключ заблокирован</div>
+        <div class="key-desc">Тебе нужно накликать <strong style="color:var(--accent)">1 000 000 000</strong> очков, чтобы получить секретный ключ.</div>
+        <div class="key-progress">
+          <div class="key-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="key-progress-label">${fmt(state.totalEarned || state.score)} / 1B (${pct}%)</div>
+      </div>`;
+  }
+}
+
+function buyStars(amount, e) {
+  if (e) e.preventDefault();
+  if (tg?.openInvoice) {
+    showSaveStatus(`⭐ Открываем оплату ${amount} звёзд...`, 'ok');
+  } else {
+    showSaveStatus('⭐ Функция оплаты только в Telegram!', 'err');
+    if (tg) tg.showAlert(`Для покупки ${amount} звёзд открой бота в Telegram.`);
+  }
+}
+
 loadGame(() => {
   updateScore();
   renderAll();
