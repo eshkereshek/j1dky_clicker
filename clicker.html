@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Кликер</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg:        #0a0a0f;
-      --surface:   #13131e;
-      --border:    #2a2a40;
-      --accent:    #f0c040;
-      --accent2:   #e05050;
-      --text:      #e8e8f0;
-      --muted:     #6060a0;
-      --glow:      rgba(240,192,64,0.35);
+      --bg:      #0a0a0f;
+      --surface: #13131e;
+      --border:  #2a2a40;
+      --accent:  #f0c040;
+      --accent2: #e05050;
+      --accent3: #50d0a0;
+      --accent4: #a070f0;
+      --text:    #e8e8f0;
+      --muted:   #6060a0;
+      --glow:    rgba(240,192,64,.35);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,12 +30,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      overflow-x: hidden;
+      padding: 16px 16px 32px;
+      /* Fix blue tap highlight on mobile */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
       user-select: none;
+      -webkit-user-select: none;
     }
 
-    /* Фоновая сетка */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -40,86 +46,155 @@
         linear-gradient(var(--border) 1px, transparent 1px),
         linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 48px 48px;
-      opacity: .35;
+      opacity: .2;
       pointer-events: none;
+      z-index: 0;
     }
 
-    /* Радиальное свечение */
     body::after {
       content: '';
       position: fixed; inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(240,192,64,.08), transparent 70%);
+      background: radial-gradient(ellipse 70% 40% at 50% 55%, rgba(240,192,64,.07), transparent 70%);
       pointer-events: none;
+      z-index: 0;
     }
 
+    /* ── Летающие картинки ── */
+    #particles-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .flying-img {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 50%;
+      opacity: 0;
+      animation: fly-around linear infinite;
+      will-change: transform, opacity;
+    }
+
+    @keyframes fly-around {
+      0%   { opacity: 0;   transform: translate(0,0) rotate(0deg) scale(.6); }
+      8%   { opacity: .55; }
+      90%  { opacity: .45; }
+      100% { opacity: 0;   transform: var(--tx) rotate(var(--rot)) scale(.9); }
+    }
+
+    /* ── Основная игра ── */
     .game {
       position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 32px;
-      padding: 24px;
+      gap: 16px;
+      width: 100%;
+      max-width: 420px;
     }
 
-    /* ── Заголовок ── */
     h1 {
       font-family: 'Unbounded', sans-serif;
       font-weight: 900;
-      font-size: clamp(1.1rem, 4vw, 1.6rem);
-      letter-spacing: .12em;
+      font-size: 1.1rem;
+      letter-spacing: .14em;
       text-transform: uppercase;
       color: var(--accent);
-      text-shadow: 0 0 24px var(--glow);
+      text-shadow: 0 0 20px var(--glow);
+      margin-top: 8px;
     }
 
     /* ── Счётчик ── */
-    .score-wrap {
-      text-align: center;
-      line-height: 1;
-    }
+    .score-wrap { text-align: center; line-height: 1; }
     .score-label {
-      font-size: .75rem;
-      letter-spacing: .2em;
+      font-size: .68rem;
+      letter-spacing: .22em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .score {
       font-family: 'Unbounded', sans-serif;
-      font-size: clamp(2.5rem, 10vw, 4.5rem);
+      font-size: clamp(2.2rem, 12vw, 3.8rem);
       font-weight: 900;
       color: var(--text);
-      text-shadow: 0 0 40px var(--glow);
+      text-shadow: 0 0 30px var(--glow);
       transition: transform .08s;
     }
     .score.pop { transform: scale(1.08); }
-
-    .per-click {
-      font-size: .85rem;
-      color: var(--muted);
-      margin-top: 6px;
-    }
+    .per-click { font-size: .78rem; color: var(--muted); margin-top: 4px; }
     .per-click span { color: var(--accent); font-weight: 600; }
 
-    /* ── Кнопка-кликер ── */
+    /* ── Статы-пилюли ── */
+    .stat-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      border: 1px solid;
+    }
+    .pill.auto   { border-color: var(--accent3); color: var(--accent3); background: rgba(80,208,160,.08); }
+    .pill.crit   { border-color: var(--accent2); color: var(--accent2); background: rgba(224,80,80,.08); }
+    .pill.combo  { border-color: var(--accent4); color: var(--accent4); background: rgba(160,112,240,.08); }
+    .pill.multi  { border-color: var(--accent);  color: var(--accent);  background: rgba(240,192,64,.08); }
+
+    /* ── Комбо-счётчик ── */
+    .combo-bar {
+      width: 100%;
+      max-width: 280px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .combo-bar.active { opacity: 1; }
+    .combo-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent4), var(--accent2));
+      border-radius: 4px;
+      transition: width .1s;
+    }
+
+    /* ── Кнопка ── */
     .clicker-btn {
       position: relative;
-      width: clamp(160px, 35vw, 220px);
-      height: clamp(160px, 35vw, 220px);
+      width: clamp(140px, 42vw, 190px);
+      height: clamp(140px, 42vw, 190px);
       border-radius: 50%;
       border: none;
       cursor: pointer;
       background: none;
       padding: 0;
       outline: none;
+      /* Critical mobile fixes */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: manipulation;
       transition: transform .12s cubic-bezier(.34,1.56,.64,1);
-      filter: drop-shadow(0 0 24px var(--glow));
+      filter: drop-shadow(0 0 20px var(--glow));
     }
-    .clicker-btn:active { transform: scale(.90); }
-    .clicker-btn:hover  { filter: drop-shadow(0 0 40px var(--glow)) brightness(1.1); }
+    .clicker-btn:active { transform: scale(.86) !important; }
+    .clicker-btn:focus { outline: none; }
+    .clicker-btn:focus-visible { outline: none; }
 
-    /* Кольцо вокруг кнопки */
     .clicker-btn::before {
       content: '';
       position: absolute; inset: -8px;
@@ -137,117 +212,134 @@
     }
     @keyframes ring-spin { to { transform: rotate(360deg); } }
 
-    /* Изображение внутри кнопки */
     .btn-img {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       object-fit: cover;
       border-radius: 50%;
       display: block;
       pointer-events: none;
+      -webkit-user-drag: none;
     }
-
-    /* Плейсхолдер когда нет изображения */
     .btn-placeholder {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       border-radius: 50%;
       background: radial-gradient(circle at 38% 38%, #2a2a50, var(--surface));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 4rem;
+      font-size: 3.5rem;
       pointer-events: none;
     }
 
-    /* ── Всплывающие +N ── */
+    /* ── Всплывающие числа ── */
     .float-text {
       position: fixed;
       font-family: 'Unbounded', sans-serif;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 900;
-      color: var(--accent);
-      text-shadow: 0 0 12px var(--glow);
       pointer-events: none;
-      animation: float-up .9s ease-out forwards;
-      z-index: 100;
+      animation: float-up .85s ease-out forwards;
+      z-index: 200;
     }
+    .float-text.normal { color: var(--accent);  text-shadow: 0 0 10px var(--glow); }
+    .float-text.crit   { color: var(--accent2); text-shadow: 0 0 14px rgba(224,80,80,.6); font-size: 1.7rem; }
+    .float-text.auto   { color: var(--accent3); text-shadow: 0 0 10px rgba(80,208,160,.4); font-size: .95rem; }
     @keyframes float-up {
       0%   { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-90px) scale(.6); }
+      100% { opacity: 0; transform: translateY(-80px) scale(.6); }
     }
 
-    /* ── Апгрейды ── */
+    /* ── Секции апгрейдов ── */
     .upgrades-title {
       font-family: 'Unbounded', sans-serif;
-      font-size: .7rem;
-      letter-spacing: .2em;
+      font-size: .58rem;
+      letter-spacing: .22em;
       text-transform: uppercase;
       color: var(--muted);
       align-self: flex-start;
+      margin-top: 4px;
     }
+    .upgrades-title.section2 { color: var(--accent3); }
+    .upgrades-title.section3 { color: var(--accent4); }
 
     .upgrades {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      width: clamp(260px, 70vw, 360px);
+      gap: 6px;
+      width: 100%;
     }
 
     .upg-btn {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
+      gap: 10px;
+      padding: 10px 12px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
       cursor: pointer;
-      transition: border-color .2s, background .2s, transform .1s;
       color: var(--text);
       text-align: left;
+      transition: border-color .15s, background .15s, opacity .15s;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: manipulation;
+      outline: none;
+      width: 100%;
     }
-    .upg-btn:hover:not(:disabled) {
-      border-color: var(--accent);
-      background: #1c1c2e;
-      transform: translateX(4px);
-    }
-    .upg-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .upg-btn:active:not(:disabled) { background: #1c1c2e; }
+    .upg-btn.type-auto:active:not(:disabled)  { border-color: var(--accent3); }
+    .upg-btn.type-crit:active:not(:disabled)  { border-color: var(--accent2); }
+    .upg-btn.type-combo:active:not(:disabled) { border-color: var(--accent4); }
+    .upg-btn.type-click:active:not(:disabled) { border-color: var(--accent);  }
+    .upg-btn:disabled { opacity: .36; cursor: not-allowed; }
 
-    .upg-icon { font-size: 1.5rem; flex-shrink: 0; }
-    .upg-info { flex: 1; }
-    .upg-name { font-weight: 600; font-size: .9rem; }
-    .upg-desc { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .upg-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .upg-info { flex: 1; min-width: 0; }
+    .upg-name { font-weight: 600; font-size: .82rem; }
+    .upg-desc { font-size: .64rem; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+    .upg-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
     .upg-cost {
       font-family: 'Unbounded', sans-serif;
-      font-size: .75rem;
+      font-size: .65rem;
       font-weight: 700;
       color: var(--accent);
       white-space: nowrap;
     }
     .upg-cost.cant-afford { color: var(--accent2); }
+    .upg-bought { font-size: .58rem; color: var(--muted); }
 
-    /* ── Уведомление о файле ── */
-    .file-notice {
-      font-size: .72rem;
+    /* ── Сохранение ── */
+    .save-status {
+      font-size: .62rem;
       color: var(--muted);
       text-align: center;
-      max-width: 320px;
-      line-height: 1.5;
+      min-height: 16px;
+      transition: color .3s;
     }
-    .file-notice code {
-      color: var(--accent);
-      background: #1a1a2e;
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-size: .7rem;
+    .save-status.ok   { color: var(--accent3); }
+    .save-status.err  { color: var(--accent2); }
+
+    /* ── Username ── */
+    .tg-user {
+      font-size: .72rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .tg-user span { color: var(--text); }
   </style>
 </head>
 <body>
-<div class="game">
 
+<!-- Слой с летающими картинками -->
+<div id="particles-layer"></div>
+
+<div class="game">
   <h1>⚡ КЛИКЕР</h1>
+  <div class="tg-user" id="tgUser"></div>
 
   <div class="score-wrap">
     <div class="score-label">очки</div>
@@ -255,125 +347,475 @@
     <div class="per-click">+<span id="cps">1</span> за клик</div>
   </div>
 
-  <button class="clicker-btn" id="mainBtn" onclick="handleClick(event)">
-    <!-- Сюда подставится <img> если найдём файл, иначе — заглушка -->
+  <!-- Статистика -->
+  <div class="stat-pills" id="statPills"></div>
+  <div class="combo-bar" id="comboBar"><div class="combo-fill" id="comboFill"></div></div>
+
+  <button class="clicker-btn" id="mainBtn" type="button">
     <div class="btn-placeholder" id="btnPlaceholder">🪙</div>
   </button>
 
-  <div class="upgrades-title">улучшения</div>
-  <div class="upgrades" id="upgrades"></div>
+  <!-- Сохранение -->
+  <div class="save-status" id="saveStatus"></div>
 
-  <div class="file-notice">
-    Положи изображение рядом с этим файлом и назови его
-    <code>button.png</code> (или <code>.jpg</code>, <code>.webp</code>, <code>.gif</code>) —
-    оно автоматически станет кнопкой.
-  </div>
+  <!-- Улучшения кликов -->
+  <div class="upgrades-title">⚡ улучшения клика</div>
+  <div class="upgrades" id="upgClick"></div>
 
+  <!-- Авто-кликеры -->
+  <div class="upgrades-title section2">🤖 авто-кликеры</div>
+  <div class="upgrades" id="upgAuto"></div>
+
+  <!-- Спецальные -->
+  <div class="upgrades-title section3">✨ особые способности</div>
+  <div class="upgrades" id="upgSpec"></div>
 </div>
 
 <script>
-// ── Состояние ──────────────────────────────────────────────────────────────
-let score = 0;
-let clickPower = 1;
+// ══════════════════════════════════════════════════════════════════
+//  Telegram WebApp init
+// ══════════════════════════════════════════════════════════════════
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  const bgColor = tg.themeParams?.bg_color;
+  if (bgColor) document.documentElement.style.setProperty('--bg', bgColor);
+  const user = tg.initDataUnsafe?.user;
+  if (user) {
+    const name = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+    document.getElementById('tgUser').innerHTML = `👤 <span>${name}</span>`;
+  }
+}
 
-const upgrades = [
-  { id:'u1', name:'Острый палец',   desc:'+1 к клику',     cost:10,   multiplier:1, bought:0, max:10, icon:'👆' },
-  { id:'u2', name:'Двойной удар',   desc:'+2 к клику',     cost:50,   multiplier:2, bought:0, max:5,  icon:'✌️' },
-  { id:'u3', name:'Золотой коготь', desc:'+5 к клику',     cost:200,  multiplier:5, bought:0, max:5,  icon:'🦅' },
-  { id:'u4', name:'Лазерный луч',   desc:'+15 к клику',    cost:1000, multiplier:15,bought:0, max:3,  icon:'⚡' },
-  { id:'u5', name:'Квантовый кулак',desc:'+50 к клику',    cost:5000, multiplier:50,bought:0, max:2,  icon:'☄️' },
+// ══════════════════════════════════════════════════════════════════
+//  Состояние игры
+// ══════════════════════════════════════════════════════════════════
+let state = {
+  score: 0,
+  clickPower: 1,
+  autoPerSec: 0,
+  multiplier: 1,       // множитель всего дохода
+  critChance: 0,       // 0..1 вероятность крита
+  critMult: 2,         // во сколько раз крит больше
+  comboCount: 0,       // текущее комбо
+  comboTimeout: null,
+  lastAutoTime: Date.now(),
+};
+
+const COMBO_RESET_MS = 1500;  // сброс комбо после паузы
+const COMBO_MAX      = 10;    // максимальное комбо (x11 множитель)
+const COMBO_BONUS    = 0.1;   // +10% за каждый уровень комбо
+const AUTO_TICK_MS   = 200;   // авто-клик тик
+
+// ── Апгрейды: КЛИК ────────────────────────────────────────────────
+const UPG_CLICK = [
+  { id:'c1', type:'click', name:'Острый палец',    desc:'+1 к клику',   cost:10,   delta:1,   mult:2.0, bought:0, max:10, icon:'👆' },
+  { id:'c2', type:'click', name:'Двойной удар',    desc:'+2 к клику',   cost:50,   delta:2,   mult:2.2, bought:0, max:5,  icon:'✌️' },
+  { id:'c3', type:'click', name:'Золотой коготь',  desc:'+5 к клику',   cost:200,  delta:5,   mult:2.4, bought:0, max:5,  icon:'🦅' },
+  { id:'c4', type:'click', name:'Лазерный луч',    desc:'+15 к клику',  cost:1000, delta:15,  mult:2.5, bought:0, max:3,  icon:'⚡' },
+  { id:'c5', type:'click', name:'Квантовый кулак', desc:'+50 к клику',  cost:5000, delta:50,  mult:2.6, bought:0, max:2,  icon:'☄️' },
 ];
 
-// ── Изображение кнопки ─────────────────────────────────────────────────────
-const imageExtensions = ['button.png','button.jpg','button.jpeg','button.webp','button.gif'];
-let imgIndex = 0;
+// ── Апгрейды: АВТО ────────────────────────────────────────────────
+const UPG_AUTO = [
+  { id:'a1', type:'auto', name:'Робот-помощник',  desc:'+0.5/сек автоматически',  cost:80,    delta:.5,  mult:2.2, bought:0, max:5,  icon:'🤖' },
+  { id:'a2', type:'auto', name:'Ферма кликов',    desc:'+2/сек автоматически',    cost:500,   delta:2,   mult:2.3, bought:0, max:5,  icon:'🏭' },
+  { id:'a3', type:'auto', name:'ИИ-кликер',       desc:'+8/сек автоматически',    cost:3000,  delta:8,   mult:2.5, bought:0, max:3,  icon:'🧠' },
+  { id:'a4', type:'auto', name:'Квантовый сервер',desc:'+30/сек автоматически',   cost:15000, delta:30,  mult:2.6, bought:0, max:2,  icon:'🖥️' },
+];
 
-function tryNextImage() {
-  if (imgIndex >= imageExtensions.length) return; // Ни одно не подошло
+// ── Апгрейды: СПЕЦ ────────────────────────────────────────────────
+const UPG_SPEC = [
+  {
+    id:'s1', type:'crit', name:'Критический удар',
+    desc:'Шанс крита +10% (x2 очки)',
+    cost:300, delta:.10, mult:2.5, bought:0, max:4, icon:'🎯',
+    apply: () => { state.critChance = Math.min(state.critChance + .10, .80); }
+  },
+  {
+    id:'s2', type:'crit', name:'Мегакрит',
+    desc:'Сила крита x3 вместо x2',
+    cost:2000, delta:1, mult:999, bought:0, max:1, icon:'💥',
+    apply: () => { state.critMult = 3; }
+  },
+  {
+    id:'s3', type:'combo', name:'Комбо-система',
+    desc:'Быстрые клики дают бонус до +100%',
+    cost:400, delta:1, mult:999, bought:0, max:1, icon:'🔥',
+    apply: () => { /* включается автоматически */ }
+  },
+  {
+    id:'s4', type:'multi', name:'Золотая лихорадка',
+    desc:'x1.5 ко всем очкам',
+    cost:1500, delta:0.5, mult:999, bought:0, max:3, icon:'✨',
+    apply: () => { state.multiplier += 0.5; }
+  },
+  {
+    id:'s5', type:'multi', name:'Эффект снежного кома',
+    desc:'Крит даёт x4 очки',
+    cost:8000, delta:1, mult:999, bought:0, max:1, icon:'⛄',
+    apply: () => { state.critMult += 1; }
+  },
+];
+
+// ══════════════════════════════════════════════════════════════════
+//  Летающие картинки фона
+// ══════════════════════════════════════════════════════════════════
+(function initParticles() {
+  const layer = document.getElementById('particles-layer');
+  const N = 22;
+  const W = window.innerWidth || 400;
+  const H = window.innerHeight || 700;
+
+  for (let i = 0; i < N; i++) {
+    const img = document.createElement('img');
+    img.src = 'pagrysha.png';
+    img.className = 'flying-img';
+    img.alt = '';
+    img.draggable = false;
+
+    // Случайная начальная позиция
+    const startX = Math.random() * W;
+    const startY = Math.random() * H;
+    img.style.left = startX + 'px';
+    img.style.top  = startY + 'px';
+
+    // Случайное направление движения
+    const dx = (Math.random() - 0.5) * W * 1.2;
+    const dy = (Math.random() - 0.5) * H * 1.2;
+    const rot = (Math.random() - 0.5) * 720;
+    img.style.setProperty('--tx', `translate(${dx}px, ${dy}px)`);
+    img.style.setProperty('--rot', `${rot}deg`);
+
+    // Случайные размер и длительность
+    const size = 14 + Math.random() * 22;
+    img.style.width  = size + 'px';
+    img.style.height = size + 'px';
+
+    const dur  = 5 + Math.random() * 12;
+    const del  = Math.random() * -15;   // отрицательная задержка = стартует сразу в случайной фазе
+    img.style.animationDuration = dur + 's';
+    img.style.animationDelay   = del + 's';
+
+    // Когда анимация заканчивается — случайно перепозиционировать
+    img.addEventListener('animationiteration', () => {
+      const nx = Math.random() * W;
+      const ny = Math.random() * H;
+      img.style.left = nx + 'px';
+      img.style.top  = ny + 'px';
+      const ndx = (Math.random() - 0.5) * W * 1.4;
+      const ndy = (Math.random() - 0.5) * H * 1.4;
+      const nrot = (Math.random() - 0.5) * 720;
+      img.style.setProperty('--tx', `translate(${ndx}px, ${ndy}px)`);
+      img.style.setProperty('--rot', `${nrot}deg`);
+    });
+
+    layer.appendChild(img);
+  }
+})();
+
+// ══════════════════════════════════════════════════════════════════
+//  Кнопка-изображение
+// ══════════════════════════════════════════════════════════════════
+const exts = ['button.png','button.jpg','button.jpeg','button.webp','button.gif'];
+let ei = 0;
+function tryImg() {
+  if (ei >= exts.length) return;
   const img = new Image();
   img.onload = () => {
     img.className = 'btn-img';
-    const ph = document.getElementById('btnPlaceholder');
-    ph.replaceWith(img);
+    img.draggable = false;
+    document.getElementById('btnPlaceholder').replaceWith(img);
   };
-  img.onerror = () => {
-    imgIndex++;
-    tryNextImage();
-  };
-  img.src = imageExtensions[imgIndex];
+  img.onerror = () => { ei++; tryImg(); };
+  img.src = exts[ei];
 }
-tryNextImage();
+tryImg();
 
-// ── Рендер апгрейдов ───────────────────────────────────────────────────────
-function renderUpgrades() {
-  const container = document.getElementById('upgrades');
-  container.innerHTML = '';
-  upgrades.forEach(u => {
-    if (u.bought >= u.max) return; // Скрыть купленные до предела
-    const btn = document.createElement('button');
-    btn.className = 'upg-btn';
-    const canAfford = score >= u.cost;
-    if (!canAfford) btn.disabled = true;
-    btn.innerHTML = `
-      <span class="upg-icon">${u.icon}</span>
-      <div class="upg-info">
-        <div class="upg-name">${u.name} <small style="color:var(--muted);font-weight:400">(${u.bought}/${u.max})</small></div>
-        <div class="upg-desc">${u.desc}</div>
-      </div>
-      <div class="upg-cost ${canAfford?'':'cant-afford'}">💰 ${u.cost}</div>
-    `;
-    btn.onclick = () => buyUpgrade(u);
-    container.appendChild(btn);
+// ══════════════════════════════════════════════════════════════════
+//  Сохранение через Telegram CloudStorage
+// ══════════════════════════════════════════════════════════════════
+const SAVE_KEY = 'clicker_state_v2';
+let saveTimer = null;
+
+function packState() {
+  return JSON.stringify({
+    score:       state.score,
+    clickPower:  state.clickPower,
+    autoPerSec:  state.autoPerSec,
+    multiplier:  state.multiplier,
+    critChance:  state.critChance,
+    critMult:    state.critMult,
+    upgClick:    UPG_CLICK.map(u => ({ bought: u.bought, cost: u.cost })),
+    upgAuto:     UPG_AUTO.map(u => ({ bought: u.bought, cost: u.cost })),
+    upgSpec:     UPG_SPEC.map(u => ({ bought: u.bought, cost: u.cost })),
+    savedAt:     Date.now(),
   });
 }
 
-function buyUpgrade(u) {
-  if (score < u.cost || u.bought >= u.max) return;
-  score -= u.cost;
-  u.bought++;
-  clickPower += u.multiplier;
-  u.cost = Math.floor(u.cost * 2.2);
-  updateScore();
-  renderUpgrades();
+function unpackState(raw) {
+  try {
+    const d = JSON.parse(raw);
+    state.score      = d.score      ?? 0;
+    state.clickPower = d.clickPower ?? 1;
+    state.autoPerSec = d.autoPerSec ?? 0;
+    state.multiplier = d.multiplier ?? 1;
+    state.critChance = d.critChance ?? 0;
+    state.critMult   = d.critMult   ?? 2;
+    if (d.upgClick) d.upgClick.forEach((s,i) => {
+      if (UPG_CLICK[i]) { UPG_CLICK[i].bought = s.bought; UPG_CLICK[i].cost = s.cost; }
+    });
+    if (d.upgAuto) d.upgAuto.forEach((s,i) => {
+      if (UPG_AUTO[i]) { UPG_AUTO[i].bought = s.bought; UPG_AUTO[i].cost = s.cost; }
+    });
+    if (d.upgSpec) d.upgSpec.forEach((s,i) => {
+      if (UPG_SPEC[i]) { UPG_SPEC[i].bought = s.bought; UPG_SPEC[i].cost = s.cost; }
+    });
+    return true;
+  } catch(e) { return false; }
 }
 
-// ── Клик ──────────────────────────────────────────────────────────────────
-function handleClick(e) {
-  score += clickPower;
+function showSaveStatus(msg, cls) {
+  const el = document.getElementById('saveStatus');
+  el.textContent = msg;
+  el.className = 'save-status ' + cls;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.textContent = ''; el.className = 'save-status'; }, 3000);
+}
+
+function saveGame() {
+  const data = packState();
+  // Telegram CloudStorage (приоритет)
+  if (tg?.CloudStorage) {
+    tg.CloudStorage.setItem(SAVE_KEY, data,
+      (err) => err ? showSaveStatus('⚠️ Ошибка сохранения', 'err')
+                   : showSaveStatus('💾 Прогресс сохранён', 'ok')
+    );
+  } else {
+    // Fallback — localStorage
+    try {
+      localStorage.setItem(SAVE_KEY, data);
+      showSaveStatus('💾 Сохранено (локально)', 'ok');
+    } catch(e) {
+      showSaveStatus('⚠️ Не удалось сохранить', 'err');
+    }
+  }
+}
+
+function loadGame(cb) {
+  if (tg?.CloudStorage) {
+    tg.CloudStorage.getItem(SAVE_KEY, (err, val) => {
+      if (!err && val) unpackState(val);
+      cb();
+    });
+  } else {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (raw) unpackState(raw);
+    } catch(e) {}
+    cb();
+  }
+}
+
+// Автосохранение каждые 15 секунд
+setInterval(saveGame, 15000);
+
+// ══════════════════════════════════════════════════════════════════
+//  Клик
+// ══════════════════════════════════════════════════════════════════
+const btn = document.getElementById('mainBtn');
+
+// Только touchstart + preventDefault чтобы убрать синюю подсветку
+btn.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+btn.addEventListener('touchend', e => {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  handleClick(t.clientX, t.clientY);
+}, { passive: false });
+btn.addEventListener('click', e => {
+  // Только для не-тач (мышь / десктоп)
+  if (e.pointerType !== 'touch') handleClick(e.clientX, e.clientY);
+});
+
+function handleClick(cx, cy) {
+  // Комбо
+  const comboUnlocked = UPG_SPEC.find(u => u.id === 's3')?.bought > 0;
+  if (comboUnlocked) {
+    clearTimeout(state.comboTimeout);
+    state.comboCount = Math.min(state.comboCount + 1, COMBO_MAX);
+    state.comboTimeout = setTimeout(() => {
+      state.comboCount = 0;
+      updateComboBar();
+      renderAll();
+    }, COMBO_RESET_MS);
+    updateComboBar();
+  }
+
+  // Базовые очки
+  let pts = state.clickPower;
+
+  // Комбо-бонус
+  if (comboUnlocked && state.comboCount > 1) {
+    pts = Math.floor(pts * (1 + (state.comboCount - 1) * COMBO_BONUS));
+  }
+
+  // Крит
+  let isCrit = false;
+  if (state.critChance > 0 && Math.random() < state.critChance) {
+    pts = Math.floor(pts * state.critMult);
+    isCrit = true;
+  }
+
+  // Глобальный множитель
+  pts = Math.floor(pts * state.multiplier);
+
+  state.score += pts;
   updateScore();
-  spawnFloat(e.clientX, e.clientY, `+${clickPower}`);
-  renderUpgrades();
+  spawnFloat(cx, cy, `+${fmt(pts)}`, isCrit ? 'crit' : 'normal');
+  renderUpgradesOnly();
+
+  if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(isCrit ? 'medium' : 'light');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  Авто-кликер тик
+// ══════════════════════════════════════════════════════════════════
+let lastAutoX = 50, lastAutoY = 50;
+setInterval(() => {
+  if (state.autoPerSec <= 0) return;
+  const pts = Math.floor((state.autoPerSec * AUTO_TICK_MS / 1000) * state.multiplier) || 1;
+  state.score += pts;
+  updateScore();
+  // Случайная позиция для флоат-текста авто
+  const rx = 30 + Math.random() * (window.innerWidth - 60);
+  const ry = 80 + Math.random() * (window.innerHeight * 0.4);
+  spawnFloat(rx, ry, `+${fmt(pts)}`, 'auto');
+  renderUpgradesOnly();
+}, AUTO_TICK_MS);
+
+// ══════════════════════════════════════════════════════════════════
+//  Покупка апгрейда
+// ══════════════════════════════════════════════════════════════════
+function buyUpgrade(u, list) {
+  if (state.score < u.cost || u.bought >= u.max) return;
+  state.score -= u.cost;
+  u.bought++;
+
+  if (u.type === 'click') {
+    state.clickPower += u.delta;
+  } else if (u.type === 'auto') {
+    state.autoPerSec += u.delta;
+  } else if (u.apply) {
+    u.apply();
+  }
+
+  u.cost = Math.floor(u.cost * u.mult);
+  updateScore();
+  renderAll();
+  saveGame();
+  if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  Рендер
+// ══════════════════════════════════════════════════════════════════
+function renderUpgList(container, list) {
+  container.innerHTML = '';
+  list.forEach(u => {
+    if (u.bought >= u.max) return;
+    const canAfford = state.score >= u.cost;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = `upg-btn type-${u.type}`;
+    if (!canAfford) b.disabled = true;
+    b.innerHTML = `
+      <span class="upg-icon">${u.icon}</span>
+      <div class="upg-info">
+        <div class="upg-name">${u.name}</div>
+        <div class="upg-desc">${u.desc}</div>
+      </div>
+      <div class="upg-right">
+        <div class="upg-cost ${canAfford?'':'cant-afford'}">💰 ${fmt(u.cost)}</div>
+        <div class="upg-bought">${u.bought}/${u.max}</div>
+      </div>`;
+    b.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+    b.addEventListener('touchend', e => { e.preventDefault(); buyUpgrade(u, list); }, { passive: false });
+    b.addEventListener('click', e => { if (e.pointerType !== 'touch') buyUpgrade(u, list); });
+    container.appendChild(b);
+  });
+}
+
+function renderAll() {
+  renderUpgList(document.getElementById('upgClick'), UPG_CLICK);
+  renderUpgList(document.getElementById('upgAuto'),  UPG_AUTO);
+  renderUpgList(document.getElementById('upgSpec'),  UPG_SPEC);
+  updateStatPills();
+}
+
+function renderUpgradesOnly() {
+  renderAll();
 }
 
 function updateScore() {
   const el = document.getElementById('score');
-  el.textContent = formatNum(score);
-  document.getElementById('cps').textContent = clickPower;
+  el.textContent = fmt(state.score);
+  document.getElementById('cps').textContent = state.clickPower;
   el.classList.remove('pop');
   void el.offsetWidth;
   el.classList.add('pop');
   setTimeout(() => el.classList.remove('pop'), 80);
 }
 
-function formatNum(n) {
-  if (n >= 1_000_000) return (n/1_000_000).toFixed(1)+'M';
-  if (n >= 1_000)     return (n/1_000).toFixed(1)+'K';
-  return n.toString();
+function updateStatPills() {
+  const pills = document.getElementById('statPills');
+  const parts = [];
+  if (state.autoPerSec > 0) parts.push(`<span class="pill auto">🤖 ${state.autoPerSec.toFixed(1)}/с</span>`);
+  if (state.critChance > 0) parts.push(`<span class="pill crit">🎯 крит ${Math.round(state.critChance*100)}% x${state.critMult}</span>`);
+  if (UPG_SPEC.find(u => u.id==='s3')?.bought > 0) parts.push(`<span class="pill combo">🔥 комбо x${state.comboCount}</span>`);
+  if (state.multiplier > 1) parts.push(`<span class="pill multi">✨ x${state.multiplier.toFixed(1)}</span>`);
+  pills.innerHTML = parts.join('');
 }
 
-// ── Всплывающие числа ──────────────────────────────────────────────────────
-function spawnFloat(x, y, text) {
+function updateComboBar() {
+  const bar  = document.getElementById('comboBar');
+  const fill = document.getElementById('comboFill');
+  const comboUnlocked = UPG_SPEC.find(u => u.id === 's3')?.bought > 0;
+  if (!comboUnlocked || state.comboCount === 0) {
+    bar.classList.remove('active');
+    return;
+  }
+  bar.classList.add('active');
+  fill.style.width = Math.min(state.comboCount / COMBO_MAX * 100, 100) + '%';
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  Утилиты
+// ══════════════════════════════════════════════════════════════════
+function fmt(n) {
+  if (n >= 1_000_000_000) return (n/1_000_000_000).toFixed(1)+'B';
+  if (n >= 1_000_000)     return (n/1_000_000).toFixed(1)+'M';
+  if (n >= 1_000)         return (n/1_000).toFixed(1)+'K';
+  return Math.floor(n).toString();
+}
+
+function spawnFloat(x, y, txt, cls = 'normal') {
   const el = document.createElement('div');
-  el.className = 'float-text';
-  el.textContent = text;
+  el.className = `float-text ${cls}`;
+  el.textContent = txt;
   el.style.left = (x - 20 + (Math.random()*40-20)) + 'px';
   el.style.top  = (y - 10) + 'px';
   document.body.appendChild(el);
   el.addEventListener('animationend', () => el.remove());
 }
 
-// ── Инит ───────────────────────────────────────────────────────────────────
-renderUpgrades();
+// ══════════════════════════════════════════════════════════════════
+//  Старт
+// ══════════════════════════════════════════════════════════════════
+loadGame(() => {
+  updateScore();
+  renderAll();
+});
 </script>
 </body>
 </html>
